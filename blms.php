@@ -7,67 +7,55 @@
  * Author URI: https://blacklivesmatter.support/
 */
 
-function blms_init() {
-  $labels = array(
-      'name'      => __( 'Parameters', 'blms' ),
-      'menu_name' => __( 'Black Lives Matter', 'blms' )
-  );
-  $args = array(
-      'labels'        => $labels,
-      'public'        => true,
-      'menu_position' => 80,
-      'capabilities'  => array(
-        'create_posts' => 'do_not_allow'
-      )
-  );
-  register_post_type( 'blms', $args );
-}
-add_action( 'init', 'blms_init' );
-
-function blms_register_submenu_page() {
-  add_submenu_page( 'edit.php?post_type=blms', '', 'Parameters', 'manage_options', 'parameters', 'blms_submenu_page_callback' ); 
-}
-
-function blms_submenu_page_callback() {
-    echo '<div class="wrap">
-            <h2>Parameters</h2>
-            <div class="blms-param-content">
-              <form method="POST" action="">
-                <ul>
-                  <li>
-                    Debug mode :
-                    <select>
-                      <option>True</option>
-                      <option selected>False</option>
-                    </select>
-                  </li>
-                  <li>
-                    Badge location : 
-                    <select>
-                      <option>Top left</option>
-                      <option>Top right</option>
-                      <option selected>Bottom right</option>
-                      <option>Bottom left</option>
-                    </select>
-                  </li>
-                  <li>
-                    Page language : 
-                    <textarea></textarea>
-                  </li>
-                  <li>
-                    Simulation : 
-                    <a href="#" target="_blank">Click here !</a>
-                  </li>
-                </ul>
-                <button type="submit">Save</button>
-              </form>
-            </div>
-          </div>';
-}
-add_action( 'admin_menu', 'blms_register_submenu_page' );
-
 function blms_enqueue_script(){
   wp_enqueue_script( 'blms', 'https://blacklivesmatter.support/js/blms.js', array(), '1.0', true );
 }
 add_action( 'wp_enqueue_scripts', 'blms_enqueue_script' );
 
+/**
+ * Register each of the options that will be part of our settings page
+*/
+function blms_register_settings(){
+  add_settings_section( 'general_section', 'General Setting', null, 'blms_settings' );
+  add_settings_field( 'debug-options', 'Debug mode', 'blms_render_debug_mode_field', 'blms_settings', 'general_section' );  
+  register_setting( 'general_section', 'debug-options' );
+}
+
+/**
+ * Function that will render the debug mode option
+*/
+function blms_render_debug_mode_field(){
+?>
+  <select name='debug-options'>
+    <option value='0' <?php selected( get_option( 'debug-options' ), '0' ); ?>>False</option>
+    <option value='1' <?php selected( get_option( 'debug-options' ), '1' ); ?>>True</option>
+  </select>
+<?php
+}
+add_action( 'admin_init', 'blms_register_settings' );
+
+/**
+ * Function that will be in charge of rendering settings page created previously
+*/ 
+function blms_render_settings_page(){
+?>
+  <div class='wrap'>
+      <h1>Black Lives Matter Plugin Settings</h1>
+      <form method='post' action='options.php'>
+        <?php
+          settings_fields( 'general_section' );
+          do_settings_sections( 'blms_settings' );
+          submit_button();
+        ?>
+      </form>
+  </div>
+<?php
+}
+
+/**
+ * Add an item for settings page that will appear under the WordPress Settings menu
+*/
+function add_menu_item(){
+  add_submenu_page( 'options-general.php', 'blms_plugin', 'BLMS Settings', 'manage_options', 'blms_settings', 'blms_render_settings_page' );
+}
+add_action( 'admin_menu', 'add_menu_item' );
