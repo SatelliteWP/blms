@@ -8,23 +8,31 @@
  * Text Domain: blms
  */
 
-
 function blms_enqueue_script() {
-  $blms_site_language = 'en';
-  if( strpos( get_locale(), 'fr' ) !== false ){
-    $blms_site_language = 'fr';
+  $blms_main_page = get_option( 'blms-main-page' ) === false ? get_home_url() : get_option( 'blms-main-page' );
+  $blms_fr_page = get_option( 'blms-fr-page' ) === false ? '' : get_option( 'blms-fr-page' );
+
+  if( '' !== $blms_fr_page ){
+    $fr = ', "'.$blms_fr_page.'":"fr"';
+  }
+  $blms_pages = '{"'.$blms_main_page.'":"en"'.$fr.'}';
+
+  $now = new DateTime();
+  if( $now->format('n') == 5 && ( $now->format('d') >= 23 && $now->format('d') <= 25 ) ){
+    $blms_force = 'true';
+  }else{
+    $blms_force = 'false';
   }
 
   $blms_settings_options = 'var blms_debug = '.get_option( 'blms-debug-mode' ).'; ';
   $blms_settings_options .= 'var blms_badge_location = "'.get_option( 'blms-badge-location' ).'"; ';
-  $blms_settings_options .= 'var blms_site_language = "'.$blms_site_language.'"; ';
+  $blms_settings_options .= 'var blms_pages = '.$blms_pages.'; ';
+  $blms_settings_options .= 'var blms_force = '.$blms_force.';';
 
   wp_enqueue_script( 'blms', plugins_url( 'blms.js', __file__ ), array(), '1.0', true );
   wp_add_inline_script( 'blms', $blms_settings_options, 'before' );
 }
 add_action( 'wp_enqueue_scripts', 'blms_enqueue_script' );
-
-
 
 /**
  * Register each of the options that will be part of our settings page
@@ -34,12 +42,14 @@ function blms_register_settings(){
 
   add_settings_field( 'blms-debug-mode', __( 'Debug mode', 'blms' ), 'blms_render_debug_mode_field', 'blms_settings', 'general_section' );  
   add_settings_field( 'blms-badge-location', __( 'Badge location', 'blms' ), 'blms_render_badge_location_field', 'blms_settings', 'general_section' );  
-  add_settings_field( 'blms-language', __( 'Support language', 'blms' ), 'blms_render_language_field', 'blms_settings', 'general_section' );  
+  add_settings_field( 'blms-main-page', __( 'Main language home page', 'blms' ), 'blms_render_main_page_field', 'blms_settings', 'general_section' );  
+  add_settings_field( 'blms-fr-page', __( 'French language home page', 'blms' ), 'blms_render_french_page_field', 'blms_settings', 'general_section' );  
   add_settings_field( 'blms-simulation', __( 'Simulation', 'blms' ), 'blms_render_simulation_field', 'blms_settings', 'general_section' );  
   
   register_setting( 'general_section', 'blms-debug-mode' );
   register_setting( 'general_section', 'blms-badge-location' );
-  register_setting( 'general_section', 'blms-language' );
+  register_setting( 'general_section', 'blms-main-page' );
+  register_setting( 'general_section', 'blms-fr-page' );
   register_setting( 'general_section', 'blms-simulation' );
 }
 add_action( 'admin_init', 'blms_register_settings' );
@@ -48,11 +58,11 @@ add_action( 'admin_init', 'blms_register_settings' );
  * Render the debug mode option
  */
 function blms_render_debug_mode_field(){
-  $debug_mode_value = get_option( 'blms-debug-mode' );
+  $debug_mode = get_option( 'blms-debug-mode' );
 ?>
   <select name="blms-debug-mode">
-    <option value=0 <?php selected( $debug_mode_value, 0 ); ?>><?php _e( 'False', 'blms' )?></option>
-    <option value=1 <?php selected( $debug_mode_value, 1 ); ?>><?php _e( 'True', 'blms' )?></option>
+    <option value=0 <?php selected( $debug_mode, 0 ); ?>><?php _e( 'False', 'blms' )?></option>
+    <option value=1 <?php selected( $debug_mode, 1 ); ?>><?php _e( 'True', 'blms' )?></option>
   </select>
 <?php
 }
@@ -61,22 +71,35 @@ function blms_render_debug_mode_field(){
  * Render the badge location option
  */
 function blms_render_badge_location_field(){
-  $badge_location_value = get_option( 'blms-badge-location' );
+  $badge_location = get_option( 'blms-badge-location' );
 ?>
   <select name="blms-badge-location">
-    <option value="topleft" <?php selected( $badge_location_value, 'topleft' ); ?>><?php _e( 'Top left', 'blms' )?></option>
-    <option value="topright" <?php selected( $badge_location_value, 'topright' ); ?>><?php _e( 'Top right', 'blms' )?></option>
-    <option value="bottomright" <?php selected( $badge_location_value, 'bottomright' ); ?>><?php _e( 'Bottom right', 'blms' )?></option>
-    <option value="bottomleft" <?php selected( $badge_location_value, 'bottomleft' ); ?>><?php _e( 'Bottom left', 'blms' )?></option>
+    <option value="topleft" <?php selected( $badge_location, 'topleft' ); ?>><?php _e( 'Top left', 'blms' )?></option>
+    <option value="topright" <?php selected( $badge_location, 'topright' ); ?>><?php _e( 'Top right', 'blms' )?></option>
+    <option value="bottomright" <?php selected( $badge_location, 'bottomright' ); ?>><?php _e( 'Bottom right', 'blms' )?></option>
+    <option value="bottomleft" <?php selected( $badge_location, 'bottomleft' ); ?>><?php _e( 'Bottom left', 'blms' )?></option>
   </select>
 <?php
 }
 
 /**
- * Render the website language
+ * Render the main language home page field
  */
-function blms_render_language_field(){
-  echo get_locale();
+function blms_render_main_page_field(){
+  $main_language = get_option( 'blms-main-page' ) === false ? get_home_url() : get_option( 'blms-main-page' );
+?>
+  <input type="text" name="blms-main-page" placeholder="<?php _e( 'Main language home page', 'blms' )?>" value="<?= $main_language; ?>" style="width:100%">
+<?php
+}
+
+/**
+ * Render french language home page field
+ */
+function blms_render_french_page_field(){
+  $fr_language = get_option( 'blms-fr-page' ) === false ? '' : get_option( 'blms-fr-page' );
+?>
+  <input type="text" name="blms-fr-page" placeholder="<?php _e( 'French language home page', 'blms' )?>" value="<?= $fr_language; ?>" style="width:100%">
+<?php
 }
 
 /**
@@ -133,7 +156,3 @@ function blms_admin_notice(){
   }
 }
 add_action( 'admin_notices', 'blms_admin_notice' );
-
-
-//add_action( 'wp_print_footer_scripts', 'blms_add_inline_script' );
-

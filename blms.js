@@ -64,7 +64,7 @@ function blms_is_forced(){
 
 function blms_badge(){
     var lang='';
-    var blms_language=(typeof blms_site_language==='undefined')?null:blms_site_language;
+    var blms_language=(typeof blms_language==='undefined')?null:blms_language;
     if(blms_language!=null){
         blms_debug?console.log('blms_language is set on this page to: '+blms_language):'';
     }
@@ -74,8 +74,7 @@ function blms_badge(){
     if(blms_language==null&&typeof blms_pages==='object'&&blms_pages!==null){
         for(let[key,value]of Object.entries(blms_pages)){
             if(key==window.location.pathname){
-                blms_debug?console.log('Language for link will be: '+value):'';
-                blms_language=value;break;
+                blms_debug?console.log('Language for link will be: '+value):'';blms_language=value;break;
             }
         }
         if(blms_language!=null){
@@ -97,15 +96,15 @@ function blms_badge(){
     var s=document.createElement('div');
     s.appendChild(i);
     var p=document.createElement('div');
-
-    var blms_badge=(typeof blms_badge_location==='undefined')?'bottomleft':blms_badge_location;
-    p.setAttribute( 'data-style', blms_badge );
+    
+    blms_badge_location=(typeof blms_badge_location==='undefined')?'bottomright':blms_badge_location;
+    p.setAttribute( 'data-style', blms_badge_location );
     var badge_style = 'width: 85px; height: 85px; display: block; position: fixed; box-shadow: gray 0px 0px 5px; overflow: hidden;z-index:99999; -moz-filter: none; -webkit-filter: none; filter: none;';
-    if( blms_badge === 'topleft' ){
+    if( blms_badge_location === 'topleft' ){
         p.setAttribute( 'style', badge_style + ' top: 100px; left: 0; border-radius: 0 5px 5px 0;' );
-    }else if( blms_badge === 'topright' ){
+    }else if( blms_badge_location === 'topright' ){
         p.setAttribute( 'style', badge_style + ' top: 100px; right: 0; border-radius: 5px 0 0 5px;' );
-    }else if( blms_badge === 'bottomright' ){
+    }else if( blms_badge_location === 'bottomright' ){
         p.setAttribute( 'style', badge_style + ' bottom: 100px; right: 0; border-radius: 5px 0 0 5px;' );
     }else{
         p.setAttribute( 'style', badge_style + ' bottom: 100px; left: 0; border-radius: 0 5px 5px 0;' );
