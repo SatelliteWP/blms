@@ -8,17 +8,23 @@
  * Text Domain: blms
  */
 
-function blms_enqueue_script(){
-  $settings_options = array(
-    'debug' => get_option( 'blms-debug-mode' ),
-    'badge_location' => get_option( 'blms-badge-location' ),
-    'language' => get_locale()
-  );
+
+function blms_enqueue_script() {
+  $blms_site_language = 'en';
+  if( strpos( get_locale(), 'fr' ) !== false ){
+    $blms_site_language = 'fr';
+  }
+
+  $blms_settings_options = 'var blms_debug = '.get_option( 'blms-debug-mode' ).'; ';
+  $blms_settings_options .= 'var blms_badge_location = "'.get_option( 'blms-badge-location' ).'"; ';
+  $blms_settings_options .= 'var blms_site_language = "'.$blms_site_language.'"; ';
 
   wp_enqueue_script( 'blms', plugins_url( 'blms.js', __file__ ), array(), '1.0', true );
-  wp_localize_script( 'blms', 'settings_options', $settings_options );
+  wp_add_inline_script( 'blms', $blms_settings_options, 'before' );
 }
 add_action( 'wp_enqueue_scripts', 'blms_enqueue_script' );
+
+
 
 /**
  * Register each of the options that will be part of our settings page
@@ -70,7 +76,6 @@ function blms_render_badge_location_field(){
  * Render the website language
  */
 function blms_render_language_field(){
-  $language_value = get_option( 'blms-language' );
   echo get_locale();
 }
 
@@ -128,3 +133,7 @@ function blms_admin_notice(){
   }
 }
 add_action( 'admin_notices', 'blms_admin_notice' );
+
+
+//add_action( 'wp_print_footer_scripts', 'blms_add_inline_script' );
+
