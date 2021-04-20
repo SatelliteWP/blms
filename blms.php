@@ -9,25 +9,20 @@
  */
 
 function blms_enqueue_script() {
-  $blms_main_page = get_option( 'blms-main-page' ) === false ? get_home_url() : get_option( 'blms-main-page' );
+  $blms_main_page = ( get_option( 'blms-main-page' ) === false || get_option( 'blms-main-page' ) === '' ) ? get_home_url() : get_option( 'blms-main-page' );
   $blms_fr_page = get_option( 'blms-fr-page' ) === false ? '' : get_option( 'blms-fr-page' );
 
-  if( '' !== $blms_fr_page ){
-    $fr = ', "'.$blms_fr_page.'":"fr"';
+  $blms_main_page = str_replace(get_home_url(), '/', $blms_main_page);
+  $lang[$blms_main_page] = 'en';
+  if($blms_fr_page !== ''){
+    $blms_fr_page = str_replace(get_home_url(), '/', $blms_fr_page);
+    $lang[$blms_fr_page] = 'fr';
   }
-  $blms_pages = '{"'.$blms_main_page.'":"en"'.$fr.'}';
-
-  $now = new DateTime();
-  if( $now->format('n') == 5 && ( $now->format('d') >= 23 && $now->format('d') <= 25 ) ){
-    $blms_force = 'true';
-  }else{
-    $blms_force = 'false';
-  }
+  $blms_pages = json_encode($lang);
 
   $blms_settings_options = 'var blms_debug = '.get_option( 'blms-debug-mode' ).'; ';
   $blms_settings_options .= 'var blms_badge_location = "'.get_option( 'blms-badge-location' ).'"; ';
-  $blms_settings_options .= 'var blms_pages = '.$blms_pages.'; ';
-  $blms_settings_options .= 'var blms_force = '.$blms_force.';';
+  $blms_settings_options .= 'var blms_pages = '.json_encode($blms_pages).'; ';
 
   wp_enqueue_script( 'blms', plugins_url( 'blms.js', __file__ ), array(), '1.0', true );
   wp_add_inline_script( 'blms', $blms_settings_options, 'before' );
@@ -86,7 +81,7 @@ function blms_render_badge_location_field(){
  * Render the main language home page field
  */
 function blms_render_main_page_field(){
-  $main_language = get_option( 'blms-main-page' ) === false ? get_home_url() : get_option( 'blms-main-page' );
+  $main_language = (get_option( 'blms-main-page' ) === false || get_option( 'blms-main-page' ) ==='' ) ? get_home_url() : get_option( 'blms-main-page' );
 ?>
   <input type="text" name="blms-main-page" placeholder="<?php _e( 'Main language home page', 'blms' )?>" value="<?= $main_language; ?>" style="width:100%">
 <?php
