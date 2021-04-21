@@ -2,8 +2,8 @@
 Contributors: satellitewp, maximejobin
 Tags: blacklivesmatter, black, lives, matter, blm, blmsupport
 Requires at least: 4.9
-Tested up to: 5.4.1
-Stable tag: 1.0.0
+Tested up to: 5.7.1
+Stable tag: 1.1
 Requires PHP: 7.1
 License: GPLv3
 
