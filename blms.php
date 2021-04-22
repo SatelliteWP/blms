@@ -6,26 +6,24 @@
  * Tested up to: 5.7.1
  * Author: Support BlackLivesMatter
  * Author URI: https://blacklivesmatter.support/
+ * Text Domain: blms
 */
 
 function blms_enqueue_script(){
-  $default_page_language['/'] = 'en';
-  $default_page_language['/fr/'] = 'fr';
-
-  $defined_page_language = [];
+  $default_page_language = array( 'en'  => '/', 'fr' => '/fr' );
+  $defined_page_language = array();
 
   //Check english pages is defined by the admin
-  if( get_option( 'blms-en-page' ) !== false && get_option( 'blms-en-page' ) !== '' ){
-    $blms_en_page = str_replace( get_home_url(), '/', get_option( 'blms-en-page' ) );
-    $defined_page_language[$blms_en_page] = 'en';
-  }
-  //Check french page is defined by the admin
-  if( get_option( 'blms-fr-page' ) !== false && get_option( 'blms-fr-page' ) !== '' ){
-    $blms_fr_page = str_replace( get_home_url(), '/', get_option( 'blms-fr-page' ) );
-    $defined_page_language[$blms_fr_page] = 'fr';
-  }
+  $en_homepage = get_option( 'blms-en-page', get_home_url() );
+  $blms_en_page = ($en_homepage !== '') ? str_replace( get_home_url(), '/', $en_homepage ) : '/';
+  $defined_page_language['en'] = $blms_en_page;
 
-  $blms_pages = empty( $defined_page_language ) ? $default_page_language : $defined_page_language;
+  //Check french pages is defined by the admin
+  $fr_homepage = get_option( 'blms-fr-page', get_home_url() );
+  $blms_fr_page = ($fr_homepage !== '') ? str_replace( get_home_url(), '/', $fr_homepage ) : '/fr';
+  $defined_page_language['fr'] = $blms_fr_page;
+
+  $blms_pages = ( count( $defined_page_language ) > 0 ) ? $defined_page_language : $default_page_language;
   $blms_pages = json_encode( $blms_pages );
 
   $blms_settings_options = 'var blms_debug = '.get_option( 'blms-debug-mode', 'false' ).'; ';
@@ -118,7 +116,7 @@ function blms_render_badge_location_field(){
 function blms_render_en_homepage_field(){
   $en_homepage = get_option( 'blms-en-page', '' );
 ?>
-  <input type="text" name="blms-en-page" class="regular-text" placeholder="<?php _e( 'English homepage URL', 'blms' )?>" value="<?= $en_homepage; ?>">
+  <input type="text" name="blms-en-page" class="regular-text" placeholder="<?php _e( 'English homepage URL', 'blms' )?>" value="<?= esc_attr( $en_homepage ); ?>">
 <?php
 }
 
@@ -128,7 +126,7 @@ function blms_render_en_homepage_field(){
 function blms_render_fr_homepage_field(){
   $fr_homepage = get_option( 'blms-fr-page', '' );
 ?>
-  <input type="text" name="blms-fr-page" class="regular-text" placeholder="<?php _e( 'French homepage URL', 'blms' )?>" value="<?= $fr_homepage; ?>">
+  <input type="text" name="blms-fr-page" class="regular-text" placeholder="<?php _e( 'French homepage URL', 'blms' )?>" value="<?= esc_attr( $fr_homepage ); ?>">
 <?php
 }
 
