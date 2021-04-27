@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: BlackLivesMatter
- * Description: Calls the Support BlackLivesMatter script to make your homepage colorless at a certain date. See our website for details about the dates.
+ * Plugin Name: Support #BlackLivesMatter
+ * Description: Calls the Support BlackLivesMatter script to make your homepage colorless between May 23 to 25. See our website for more details.
  * Version: 1.1
  * Tested up to: 5.7.1
  * Author: Support BlackLivesMatter
