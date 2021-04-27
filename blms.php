@@ -10,28 +10,41 @@
  */
 
 function blms_enqueue_script(){
-	$default_page_language = array( 'en'  => '/', 'fr' => '/fr' );
-	$defined_page_language = array();
-
-	//Check english pages is defined by the admin
-	$en_homepage = get_option( 'blms-en-page', get_home_url() );
-	$blms_en_page = ($en_homepage !== '') ? str_replace( get_home_url(), '/', $en_homepage ) : '/';
-	$defined_page_language['en'] = $blms_en_page;
-
-	//Check french pages is defined by the admin
-	$fr_homepage = get_option( 'blms-fr-page', get_home_url() );
-	$blms_fr_page = ($fr_homepage !== '') ? str_replace( get_home_url(), '/', $fr_homepage ) : '/fr';
-	$defined_page_language['fr'] = $blms_fr_page;
-
-	$blms_pages = ( count( $defined_page_language ) > 0 ) ? $defined_page_language : $default_page_language;
-	$blms_pages = json_encode( $blms_pages );
-
-	$blms_settings_options = 'var blms_debug = '.get_option( 'blms-debug-mode', 'false' ).'; ';
-	$blms_settings_options .= 'var blms_badge_location = "'.get_option( 'blms-badge-location', 'bottomright' ).'"; ';
-	$blms_settings_options .= 'var blms_pages = '.$blms_pages.'; ';
 
 	wp_enqueue_script( 'blms', plugins_url( 'blms.js', __file__ ), array(), '1.0', true );
-	wp_add_inline_script( 'blms', $blms_settings_options, 'before' );
+
+	$home_url = home_url();
+
+	$pages = array();
+	$en_page = get_option( 'blms-en-page', '' );
+	$en_page = str_replace( $home_url, '', $en_page );
+	if ( ! empty( $en_page ) ) {
+		$pages[$en_page] = 'en';
+	}
+
+	$fr_page = get_option( 'blms-fr-page', '' );
+	$fr_page = str_replace( $home_url, '', $fr_page );
+	if ( ! empty( $fr_page ) ) {
+		$pages[$fr_page] = 'fr';
+	}
+
+	$js = '';
+
+	// Debug mode
+	$debug_mode = get_option( 'blms-debug-mode', 'false' );
+	if ( 'false' !== $debug_mode ) {
+		$js .= "var blms_debug = true;\n";
+	}
+	
+	// Badge location
+	$js .= "var blms_badge_location = '".get_option( 'blms-badge-location', 'bottomright' )."';\n";
+
+	// Pages languages
+	if ( count( $pages ) > 0 ) {
+		$js .= 'var blms_pages = '. json_encode( $pages ) . "\n";
+	}
+	
+	wp_add_inline_script( 'blms', $js, 'before' );
 }
 add_action( 'wp_enqueue_scripts', 'blms_enqueue_script' );
 
@@ -116,7 +129,7 @@ function blms_render_badge_location_field(){
 function blms_render_en_homepage_field(){
 	$en_homepage = get_option( 'blms-en-page', '' );
 ?>
-	<input type="text" name="blms-en-page" class="regular-text" placeholder="<?php _e( 'English homepage URL', 'blms' )?>" value="<?= esc_attr( $en_homepage ); ?>">
+	<input type="text" name="blms-en-page" class="regular-text" placeholder="<?= __( 'e.g.: ', 'blms' ) . home_url() ?>" value="<?= esc_attr( $en_homepage ); ?>">
 <?php
 }
 
@@ -126,7 +139,7 @@ function blms_render_en_homepage_field(){
 function blms_render_fr_homepage_field(){
 	$fr_homepage = get_option( 'blms-fr-page', '' );
 ?>
-	<input type="text" name="blms-fr-page" class="regular-text" placeholder="<?php _e( 'French homepage URL', 'blms' )?>" value="<?= esc_attr( $fr_homepage ); ?>">
+	<input type="text" name="blms-fr-page" class="regular-text" placeholder="<?= __( 'e.g.: ', 'blms' ) . home_url( '/fr' ) ?>" value="<?= esc_attr( $fr_homepage ); ?>">
 <?php
 }
 
