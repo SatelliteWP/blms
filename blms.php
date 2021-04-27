@@ -157,17 +157,19 @@ function blms_render_simulation_field(){
  */
 function blms_admin_notice(){
 	$screen = get_current_screen();
-	if( 'dashboard' === $screen->id ){ //Display the notice on the dashboard
-	$now = new DateTime();
-	if( $now->format('n') == 5 && ( $now->format('d') >= 15 && $now->format('d') <= 22 ) ){ ?>
-		<div class="notice notice-warning is-dismissible">
-			<p><?php _e( 'Reminder: Your homepage will turn colorless from May 23rd to 25th to support #BlackLivesMatter.', 'blms' ) ?></p>
-		</div>
-	<?php }elseif( $now->format('n') == 5 && ( $now->format('d') >= 23 && $now->format('d') <= 25 ) ){ ?>
-		<div class="notice notice-info is-dismissible">
-			<p><?php _e( 'Reminder: Your homepage is colorless for 3 days from May 23rd to 25th. Thank you for your support to #BlackLivesMatter.', 'blms' ) ?></p>
-		</div>
-	<?php }
+
+	//Display the notice on the dashboard
+	if( 'dashboard' === $screen->id ){ 
+		$now = new DateTime();
+		if( $now->format('n') == 5 && ( $now->format('d') >= 15 && $now->format('d') <= 22 ) ){ ?>
+			<div class="notice notice-warning is-dismissible">
+				<p><?php _e( 'Reminder: Your homepage will turn colorless from May 23rd to 25th to support #BlackLivesMatter.', 'blms' ) ?></p>
+			</div>
+		<?php }elseif( $now->format('n') == 5 && ( $now->format('d') >= 23 && $now->format('d') <= 25 ) ){ ?>
+			<div class="notice notice-info is-dismissible">
+				<p><?php _e( 'Reminder: Your homepage is colorless for 3 days from May 23rd to 25th. Thank you for your support to #BlackLivesMatter.', 'blms' ) ?></p>
+			</div>
+		<?php }
 	}
 }
 add_action( 'admin_notices', 'blms_admin_notice' );
