@@ -11,7 +11,7 @@
 
 function blms_enqueue_script(){
 
-	wp_enqueue_script( 'blms', plugins_url( 'blms.js', __file__ ), array(), '1.0', true );
+	wp_enqueue_script( 'blms', 'https://blacklivesmatter.support/js/blms.js', array(), '1.0', true );
 
 	$home_url = home_url();
 
