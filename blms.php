@@ -52,7 +52,7 @@ add_action( 'wp_enqueue_scripts', 'blms_enqueue_script' );
  * Add an item for settings page that will appear under the WordPress Settings menu
  */
 function blms_add_menu_item(){
-	add_submenu_page( 'options-general.php', 'blms_plugin', 'BLMS', 'manage_options', 'blms_settings', 'blms_render_settings_page' );
+	add_submenu_page( 'options-general.php', 'blms_plugin', __( '#BlackLivesMatter', 'blms' ), 'manage_options', 'blms_settings', 'blms_render_settings_page' );
 }
 add_action( 'admin_menu', 'blms_add_menu_item' );
 
