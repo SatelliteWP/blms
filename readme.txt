@@ -1,17 +1,17 @@
-=== BLMS ===
-Contributors: satellitewp, maximejobin
-Tags: blacklivesmatter, black, lives, matter, blm, blmsupport
+=== Support #BlackLivesMatter ===
+Contributors: satellitewp, maximejobin, msaba
+Tags: blacklivesmatter, black, lives, matter, blm, blmsupport, blms
 Requires at least: 4.9
 Tested up to: 5.7.1
 Stable tag: 1.1
 Requires PHP: 7.1
 License: GPLv3
 
-Make your homepage colorless during the BlackLivesMatter week.
+Make your homepage colorless to support #BlackLivesMatter.
 
 == Description ==
 
-Make your homepage colorless during the BlackLivesMatter week.
+Make your homepage colorless between May 23-25 to support #BlackLivesMatter.
 
 The plugin uses **an external** JavaScript file to make your homepage colorless.
 
@@ -31,13 +31,14 @@ This plugin is multilingual ready.
 1. Search for `BLMS`.
 1. Click on 'Install now'.
 1. Once the plugin is installed, click on 'Activate'.
+1. Wait for the date to be between May 23-25!
 
 
 == Frequently Asked Questions ==
 
-= Can I have some control about how and when things are displayed? =
+= Can I have some control about how things are displayed? =
 
-Yes! Go to https://blacklivesmatter.support for more information
+Yes! Go to https://blacklivesmatter.support for more information or see the Settings section.
 
 
 == Privacy policy ==
@@ -48,6 +49,9 @@ You are invited to [take a look at the JavaScript](https://github.com/SatelliteW
 
 
 == Changelog ==
+
+= 1.1.0 =
+* Add settings page
 
 = 1.0.0 =
 * First stable version
