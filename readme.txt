@@ -1,5 +1,5 @@
 === BLMS ===
-Contributors: satellitewp, maximejobin
+Contributors: satellitewp, maximejobin, moustaphasaba
 Tags: blacklivesmatter, black, lives, matter, blm, blmsupport
 Requires at least: 4.9
 Tested up to: 5.7.1
