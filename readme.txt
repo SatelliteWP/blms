@@ -1,5 +1,5 @@
 === Support #BlackLivesMatter ===
-Contributors: satellitewp, maximejobin, msaba
+Contributors: satellitewp, maximejobin, moustaphasaba
 Tags: blacklivesmatter, black, lives, matter, blm, blmsupport, blms
 Requires at least: 4.9
 Tested up to: 5.7.1
